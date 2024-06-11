@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery de Açaí</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='paginainicial.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo ao Delivery de Açaí</h1>
+        <h2>Fazer Pedido</h2>
+        <form id="pedido-form" action="{{ url_for('fazer_pedido') }}" method="post" onsubmit="return validarPedido()">
+            <div class="form-group">
+                <label for="cliente">Nome:</label>
+                <input type="text" id="cliente" name="cliente" required>
+            </div>
+            <div class="form-group">
+                <label for="contato">Contato:</label>
+                <input type="text" id="contato" name="contato" required>
+            </div>
+            <div class="form-group">
+                <label for="endereco">Endereço:</label>
+                <input type="text" id="endereco" name="endereco" required>
+            </div>
+            <h2>Itens:</h2>
+            {% for item in items %}
+            <div class="form-group">
+                <label>{{ item.nome }} - R$ {{ "%.2f"|format(item.preco) }}</label>
+                <input type="number" class="quantidade-item" name="quantidade_{{ item.id }}" id="quantidade_{{ item.id }}" min="0" value="0">
+            </div>
+            {% endfor %}
+            <h2>Método de Pagamento:</h2>
+            <div class="payment-options">
+                <div class="payment-option">
+                    <input type="radio" id="pix" name="forma_pagamento" value="pix">
+                    <label for="pix">PIX</label>
+                </div>
+                <div class="payment-option">
+                    <input type="radio" id="dinheiro" name="forma_pagamento" value="dinheiro">
+                    <label for="dinheiro">Dinheiro</label>
+                </div>
+                <div class="payment-option">
+                    <input type="radio" id="cartao_credito" name="forma_pagamento" value="cartao_credito">
+                    <label for="cartao_credito">Cartão de Crédito</label>
+                </div>
+                <div class="payment-option">
+                    <input type="radio" id="cartao_debito" name="forma_pagamento" value="cartao_debito">
+                    <label for="cartao_debito">Cartão de Débito</label>
+                </div>
+            </div>
+            <!-- Campo para inserir o valor do pagamento em dinheiro -->
+            <div class="form-group" id="pagamento-dinheiro-div" style="display: none;">
+                <label for="pagamento_em_dinheiro">Pagamento em Dinheiro:</label>
+                <input type="number" id="pagamento_em_dinheiro" name="pagamento_em_dinheiro" step="0.01" min="0">
+            </div>
+            <div id="total-pedido">
+                <h3>Total do Pedido: R$ <span id="total-valor">0.00</span></h3>
+            </div>
+            <div class="form-group">
+                <label for="confirmacao">Confirmar Pedido:</label>
+                <input type="checkbox" id="confirmacao" name="confirmacao" required>
+                <label for="confirmacao">Estou ciente e confirmo meu pedido.</label>
+            </div>
+            <button type="submit">Fazer Pedido</button>
+        </form>
+    </div>
+
+    <script>
+        // Adiciona um evento a todos os campos de quantidade de itens
+        var quantidadeInputs = document.querySelectorAll('.quantidade-item');
+        quantidadeInputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                if (this.value.trim() === '') {
+                    this.value = '0';
+                }
+                calcularTotalPedido();
+            });
+        });
+
+        // Função para calcular o total do pedido
+        function calcularTotalPedido() {
+            var total = 0;
+            quantidadeInputs.forEach(function(input) {
+                var quantidade = parseInt(input.value) || 0;
+                var preco = parseFloat(input.parentNode.querySelector('label').textContent.split('R$')[1]);
+                total += quantidade * preco;
+            });
+            // Atualiza o valor total exibido
+            document.getElementById('total-valor').textContent = total.toFixed(2);
+        }
+
+        // Script para mostrar o campo de pagamento em dinheiro apenas se o método de pagamento for dinheiro
+        document.querySelectorAll('.payment-option input[type="radio"]').forEach((radio) => {
+            radio.addEventListener("change", function() {
+                if (this.value === "dinheiro") {
+                    document.getElementById("pagamento-dinheiro-div").style.display = "block";
+                } else {
+                    document.getElementById("pagamento-dinheiro-div").style.display = "none";
+                }
+            });
+        });
+
+        // Função para validar se o usuário confirmou o pedido antes de enviar o formulário
+        function validarPedido() {
+            var confirmacao = document.getElementById("confirmacao");
+            if (!confirmacao.checked) {
+                alert("Por favor, confirme seu pedido antes de efetivar.");
+                return false;
+            }
+            // Verifica se o pagamento em dinheiro é suficiente, se selecionado
+            var formaPagamento = document.querySelector('input[name="forma_pagamento"]:checked').value;
+            if (formaPagamento === "dinheiro") {
+                var pagamentoEmDinheiro = parseFloat(document.getElementById('pagamento_em_dinheiro').value);
+                var totalPedido = parseFloat(document.getElementById('total-valor').textContent);
+                if (isNaN(pagamentoEmDinheiro) || pagamentoEmDinheiro < totalPedido) {
+                    alert("O valor do pagamento em dinheiro deve ser maior ou igual ao total do pedido.");
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

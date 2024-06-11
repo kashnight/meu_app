@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Pedidos</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pedidos_gerencia.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciamento de Pedidos</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Contato</th>
+                <th>Endereço</th>
+                <th>Itens do Pedido</th>
+                <th>Forma de Pagamento</th>
+                <th>Troco</th> <!-- Adicionando a coluna para exibir o troco -->
+                <th>Status</th>
+                <th>Total</th>
+                <th>Ações</th>
+            </tr>
+            {% for pedido in pedidos %}
+            <tr>
+                <td>{{ pedido.id }}</td>
+                <td>{{ pedido.cliente }}</td>
+                <td>{{ pedido.contato }}</td>
+                <td>{{ pedido.endereco }}</td>
+                <td>
+                    <table class="inner-table">
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantidade</th>
+                            <th>Preço Unitário</th>
+                            <th>Subtotal</th>
+                        </tr>
+                        {% for item in pedido.items %}
+                        <tr>
+                            <td>{{ item.item.nome }}</td>
+                            <td>{{ item.quantidade }}</td>
+                            <td>R$ {{ "%.2f"|format(item.item.preco) }}</td>
+                            <td>R$ {{ "%.2f"|format(item.quantidade * item.item.preco) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+                <td>{{ pedido.forma_pagamento }}</td>
+                <td>{% if pedido.troco is not none %}R$ {{ "%.2f"|format(pedido.troco) }}{% else %}N/A{% endif %}</td> <!-- Exibindo o valor do troco -->
+                <td>{{ pedido.status }}</td>
+                <td>R$ {{ "%.2f"|format(pedido.total) }}</td>
+                <td>
+                    <form action="{{ url_for('atualizar_pedido_funcionario', pedido_id=pedido.id) }}" method="post">
+                        <select name="status">
+                            <option value="Pendente" {% if pedido.status == 'Pendente' %}selected{% endif %}>Pendente</option>
+                            <option value="Em preparação" {% if pedido.status == 'Em preparação' %}selected{% endif %}>Em preparação</option>
+                            <option value="Pedido a caminho" {% if pedido.status == 'Pedido a caminho' %}selected{% endif %}>Pedido a caminho</option>
+                            <option value="Entregue" {% if pedido.status == 'Entregue' %}selected{% endif %}>Entregue</option>
+                        </select>
+                        <button type="submit">Atualizar</button>
+                    </form>
+                    <form action="{{ url_for('remover_pedido_funcionario', pedido_id=pedido.id) }}" method="post">
+                        <button type="submit">Remover</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="UTF-8">
+    <title>Confirmação do Pedido</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Confirmação do Pedido</h1>
+        <p>ID do Pedido: {{ pedido.id }}</p>
+        <p>Status: {{ pedido.status }}</p>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="progress-steps">
+                <div class="step" id="step-1">Pendente</div>
+                <div class="step" id="step-2">Em preparação</div>
+                <div class="step" id="step-3">Pedido a caminho</div>
+                <div class="step" id="step-4">Entregue</div>
+            </div>
+        </div>
+
+        <h2>Itens do Pedido:</h2>
+        <ul>
+            {% for item in pedido.items %}
+                <li>{{ item.item.nome }} - Quantidade: {{ item.quantidade }} - Preço Unitário: R$ {{ item.item.preco }} - Subtotal: R$ {{ item.quantidade * item.item.preco }}</li>
+            {% endfor %}
+        </ul>
+        <h2>Total: R$ {{ total }}</h2>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const status = "{{ pedido.status }}";
+            let progressPercentage = 0;
+            let activeStep = 0;
+
+            switch (status) {
+                case "Pendente":
+                    progressPercentage = 0;
+                    activeStep = 1;
+                    break;
+                case "Em preparação":
+                    progressPercentage = 33;
+                    activeStep = 2;
+                    break;
+                case "Pedido a caminho":
+                    progressPercentage = 66;
+                    activeStep = 3;
+                    break;
+                case "Entregue":
+                    progressPercentage = 100;
+                    activeStep = 4;
+                    break;
+            }
+
+            document.getElementById('progress').style.width = progressPercentage + '%';
+
+            for (let i = 1; i <= activeStep; i++) {
+                document.getElementById(`step-${i}`).classList.add('completed');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f7f7f7; /* Cor de fundo */
+}
+
+.container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 1200px; /* Aumentando a largura máxima */
+    overflow-x: auto; /* Adicionando rolagem horizontal se necessário */
+}
+
+h1, h2 {
+    color: #2c3e50;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+th, td {
+    padding: 12px; /* Aumentando o preenchimento */
+    text-align: center;
+}
+
+th {
+    background-color: #f0f0f0; /* Cor de fundo para cabeçalho */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Cor de fundo alternada para linhas */
+}
+
+.payment-options {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.payment-option {
+    margin-right: 1rem;
+}
+
+.payment-option label {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.payment-option input[type="radio"] {
+    display: none;
+}
+
+.payment-option label:hover {
+    background-color: #e0e0e0;
+}
+
+.payment-option input[type="radio"]:checked + label {
+    background-color: #007bff;
+    color: #fff;
+}
+
+button[type="submit"] {
+    padding: 0.5rem 1rem; /* Ajustando o preenchimento */
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+button[type="submit"].confirm {
+    background-color: #28a745;
+}
+
+button[type="submit"].confirm:hover {
+    background-color: #218838;
+}
+
+button[type="submit"].edit {
+    background-color: #e67e22;
+}
+
+button[type="submit"].edit:hover {
+    background-color: #d35400;
+}
+
